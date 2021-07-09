@@ -15,6 +15,8 @@
 "
 " Options:
 "   Set to anything to enable:
+"     php_disable_highlight_html      Load HTML syntax highlighting inside strings
+"     php_disable_highlight_sql       Load SQL syntax highlighting files
 "     php_sql_query           SQL syntax highlighting inside strings
 "     php_htmlInStrings       HTML syntax highlighting inside strings
 "     php_baselib             highlighting baselib functions
@@ -62,8 +64,10 @@ if !exists("main_syntax")
   let main_syntax = 'php'
 endif
 
-runtime! syntax/html.vim
-unlet b:current_syntax
+if !exists('php_disable_highlight_html')
+  runtime! syntax/html.vim
+  unlet b:current_syntax
+endif
 
 " accept old options
 if !exists("php_sync_method")
@@ -81,9 +85,12 @@ endif
 
 syn cluster htmlPreproc add=phpRegion,phpRegionAsp,phpRegionSc
 
-syn include @sqlTop syntax/sql.vim
-syn sync clear
-unlet b:current_syntax
+
+if !exists('php_disable_highlight_sql')
+  syn include @sqlTop syntax/sql.vim
+  syn sync clear
+  unlet b:current_syntax
+endif
 syn cluster sqlTop remove=sqlString,sqlComment
 if exists( "php_sql_query")
   syn cluster phpAddStrings contains=@sqlTop
